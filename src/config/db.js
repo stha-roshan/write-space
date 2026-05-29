@@ -1,5 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config();
 import pkg from "pg";
 const { Pool } = pkg;
 
@@ -13,7 +11,7 @@ const testConnection = async () => {
     client = await pool.connect();
     const result = await client.query("SELECT NOW()");
     console.log("Database connected successfully");
-    console.log("Query result", result);
+    // console.log("Query result", result);
   } catch (error) {
     console.error("Database connection failed", error);
     process.exit(1);
@@ -22,4 +20,4 @@ const testConnection = async () => {
   }
 };
 
-export { pool, testConnection }
+export { pool, testConnection };

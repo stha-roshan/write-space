@@ -1,5 +1,25 @@
-import express from 'express'
+import express from "express";
+import userRoutes from "./routes/user/user.routes.js";
+import { ApiError } from "./shared/utils/index.js";
 
-const app = express()
+const app = express();
 
-export { app }
+app.use(express.json());
+
+app.use("/users", userRoutes);
+
+app.use((err, req, res, next) => {
+  if (err instanceof ApiError) {
+    return res.status(err.statusCode).json({
+      success: false,
+      message: err.message,
+      errors: err.errors,
+    });
+  }
+
+  return res.status(500).json({
+    success: false,
+    message: "something went wrong",
+  });
+});
+export { app };

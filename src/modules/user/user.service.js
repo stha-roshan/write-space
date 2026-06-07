@@ -6,7 +6,6 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../shared/utils/index.js";
-import { json } from "zod";
 
 const saltRounds = 10;
 
@@ -50,21 +49,30 @@ export const UserService = {
     }
 
     const payload = {
-      id: user.id,
-      role: user.role,
+      id: user.data.id,
+      role: user.data.role,
     };
 
     const responseData = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
+      id: user.data.id,
+      name: user.data.name,
+      email: user.data.email,
     };
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
 
     if (process.env.NODE_ENV === "development") {
-      ((responseData.accessToken = accessToken),
-        (responseData.refreshToken = refreshToken));
+      responseData.accessToken = accessToken;
+      responseData.refreshToken = refreshToken;
+    }
+
+    const storeToken = await UserRepository.setRefreshToken(
+      email,
+      refreshToken,
+    );
+
+    if (!storeToken.success) {
+      throw new ApiError(500, "Failed to store refresh token");
     }
 
     return { accessToken, refreshToken, responseData };

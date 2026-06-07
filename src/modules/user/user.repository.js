@@ -1,5 +1,5 @@
-import { email } from "zod";
 import { pool } from "../../config/db.js";
+import { ApiError } from "../../shared/utils/index.js";
 
 const registerUserQuery = `
     INSERT INTO users (name, email, password)
@@ -7,22 +7,17 @@ const registerUserQuery = `
     RETURNING id, name, email, role, is_active, created_at
     `;
 
-const existingUserQuery = `
-    SELECT id
-    FROM users
-    WHERE email = $1
-    `;
-
-const getUserByEmailQuery = `
-    SELECT id, name, email, password, role, is_active
-    FROM users
-    WHERE email = $1
-`;
-
 const findUserQuery = `
     SELECT id, name, email, password, role, is_active
     FROM users
     WHERE email = $1  
+`;
+
+const setRefreshTokenQuery = `
+  UPDATE users
+  SET refresh_token = $1
+  WHERE email = $2
+  RETURNING id, email, refresh_token
 `;
 
 export const UserRepository = {
@@ -41,24 +36,7 @@ export const UserRepository = {
       return registeredUser.rows[0];
     } catch (error) {
       console.log("Error regestering user", error);
-      throw error;
-    } finally {
-      client.release();
-    }
-  },
-
-  isExistingUser: async (email) => {
-    const client = await pool.connect();
-
-    try {
-      const user = await client.query(existingUserQuery, [email]);
-
-      //   console.log('from user repository: existing user check --> user: ', user.rowCount )
-
-      return user.rowCount >= 1;
-    } catch (error) {
-      console.log("Error checking existing user", error);
-      throw error;
+      throw new ApiError(500, "Database operation failed while register");
     } finally {
       client.release();
     }
@@ -76,21 +54,31 @@ export const UserRepository = {
       };
     } catch (error) {
       console.log("Error finding user", error);
-      throw error;
+      throw new ApiError(500, "Database operation failed while findUser");
     } finally {
       client.release();
     }
   },
 
-  loginUser: async (email) => {
+  setRefreshToken: async (email, refreshToken) => {
     const client = await pool.connect();
 
     try {
-      const user = await client.query(getUserByEmailQuery, [email]);
-      return user.rows[0];
+      const result = await client.query(setRefreshTokenQuery, [
+        refreshToken,
+        email,
+      ]);
+
+      return {
+        success: result.rowCount >= 1,
+        userWithToken: result.rows[0],
+      };
     } catch (error) {
-      console.log("Error getting user by email", error);
-      throw error;
+      console.log("Error storing refresh token", error);
+      throw new ApiError(
+        500,
+        "Database operation failed while setRefreshToken",
+      );
     } finally {
       client.release();
     }

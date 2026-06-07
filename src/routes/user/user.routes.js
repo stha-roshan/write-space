@@ -5,7 +5,6 @@ import {
   registrationSchema,
   loginSchema,
 } from "../../modules/user/user.schema.js";
-import { ro } from "zod/locales";
 const router = express.Router();
 
 router.post("/register", validateBody(registrationSchema), registerUser);

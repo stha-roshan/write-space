@@ -12,9 +12,9 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   if (!user) {
     console.log(
-      "Something went wrong while regestering user -> [debug: user.controller]",
+      "Something went wrong while registering user -> [debug: user.controller]",
     );
-    throw new ApiError(500, "Something went wrong while regestering user");
+    throw new ApiError(500, "Something went wrong while registering user");
   }
 
   return res

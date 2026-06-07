@@ -1,3 +1,4 @@
+import { email } from "zod";
 import { pool } from "../../config/db.js";
 
 const registerUserQuery = `
@@ -7,9 +8,22 @@ const registerUserQuery = `
     `;
 
 const existingUserQuery = `
-    SELECT id FROM users
+    SELECT id
+    FROM users
     WHERE email = $1
     `;
+
+const getUserByEmailQuery = `
+    SELECT id, name, email, password, role, is_active
+    FROM users
+    WHERE email = $1
+`;
+
+const findUserQuery = `
+    SELECT id, name, email, password, role, is_active
+    FROM users
+    WHERE email = $1  
+`;
 
 export const UserRepository = {
   register: async (data) => {
@@ -44,6 +58,38 @@ export const UserRepository = {
       return user.rowCount >= 1;
     } catch (error) {
       console.log("Error checking existing user", error);
+      throw error;
+    } finally {
+      client.release();
+    }
+  },
+
+  findUser: async (email) => {
+    const client = await pool.connect();
+
+    try {
+      const user = await client.query(findUserQuery, [email]);
+
+      return {
+        exists: user.rowCount >= 1,
+        data: user.rows[0],
+      };
+    } catch (error) {
+      console.log("Error finding user", error);
+      throw error;
+    } finally {
+      client.release();
+    }
+  },
+
+  loginUser: async (email) => {
+    const client = await pool.connect();
+
+    try {
+      const user = await client.query(getUserByEmailQuery, [email]);
+      return user.rows[0];
+    } catch (error) {
+      console.log("Error getting user by email", error);
       throw error;
     } finally {
       client.release();

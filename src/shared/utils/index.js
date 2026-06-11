@@ -6,6 +6,7 @@ import {
   accessTokenCookieOption,
   refreshTokenCookieOption,
 } from "./cookieOptions.js";
+import { logger } from "./logger.js";
 
 export {
   asyncHandler,
@@ -15,4 +16,5 @@ export {
   generateRefreshToken,
   accessTokenCookieOption,
   refreshTokenCookieOption,
+  logger,
 };

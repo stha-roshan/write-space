@@ -1,5 +1,5 @@
 import { pool } from "../../config/db.js";
-import { ApiError } from "../../shared/utils/index.js";
+import { ApiError, logger } from "../../shared/utils/index.js";
 
 const registerUserQuery = `
     INSERT INTO users (name, email, password)
@@ -32,10 +32,10 @@ export const UserRepository = {
         email,
         password,
       ]);
-      //   console.log('User regisetered successfully -> [debug: user.repository.js]',registeredUser.rows[0]);
       return registeredUser.rows[0];
     } catch (error) {
-      console.log("Error regestering user", error);
+      // console.log("Error registering user", error);
+      logger.error("Error registering user", error);
       throw new ApiError(500, "Database operation failed while register");
     } finally {
       client.release();
@@ -53,7 +53,8 @@ export const UserRepository = {
         data: user.rows[0],
       };
     } catch (error) {
-      console.log("Error finding user", error);
+      // console.log("Error finding user", error);
+      logger.error("Error finding user", error);
       throw new ApiError(500, "Database operation failed while findUser");
     } finally {
       client.release();
@@ -74,7 +75,8 @@ export const UserRepository = {
         userWithToken: result.rows[0],
       };
     } catch (error) {
-      console.log("Error storing refresh token", error);
+      // console.log("Error storing refresh token", error);
+      logger.error("Error storing refresh token", error);
       throw new ApiError(
         500,
         "Database operation failed while setRefreshToken",

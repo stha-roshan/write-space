@@ -22,7 +22,6 @@ export const UserService = {
 
     const hash = await bcrypt.hash(password, saltRounds);
 
-    //now passing to user repository
     const preparedData = {
       name,
       email,

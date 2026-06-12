@@ -1,5 +1,6 @@
 import pkg from "pg";
 const { Pool } = pkg;
+import { logger } from "../shared/utils/index.js";
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -10,10 +11,9 @@ const testConnection = async () => {
   try {
     client = await pool.connect();
     const result = await client.query("SELECT NOW()");
-    console.log("Database connected successfully");
-    // console.log("Query result", result);
+    logger.info("Database connected successfully");
   } catch (error) {
-    console.error("Database connection failed", error);
+    logger.error("Database connection failed", error);
     process.exit(1);
   } finally {
     if (client) client.release();

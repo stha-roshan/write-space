@@ -1,11 +1,13 @@
 import { ApiError } from "./ApiError.js";
+import { logger } from "./index.js";
 
 const asyncHandler = (requestHandler) => {
   return async (req, res, next) => {
     try {
       await requestHandler(req, res, next);
     } catch (error) {
-      console.error(`[asyncHandler] Error caught: `, {
+
+      logger.error("[asyncHandler] ", {
         message: error.message || error,
         isApiError: error instanceof ApiError,
         stack: error.stack || "No stack trace available",

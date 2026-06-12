@@ -1,6 +1,6 @@
 import { ApiError } from "../utils/index.js";
 
-export const formatError = (issues) => {
+const formatError = (issues) => {
   const errors = {};
   for (const issue of issues) {
     errors[issue.path[0]] = issue.message;
@@ -15,7 +15,6 @@ export const validateBody = (schema) => {
 
     if (!validation.success) {
       const issues = formatError(validation.error.issues);
-      // console.log(issues);
       return next(new ApiError(400, "Invalid registration data", issues));
     }
 

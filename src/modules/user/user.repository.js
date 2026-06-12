@@ -34,7 +34,6 @@ export const UserRepository = {
       ]);
       return registeredUser.rows[0];
     } catch (error) {
-      // console.log("Error registering user", error);
       logger.error("Error registering user", error);
       throw new ApiError(500, "Database operation failed while register");
     } finally {
@@ -53,7 +52,6 @@ export const UserRepository = {
         data: user.rows[0],
       };
     } catch (error) {
-      // console.log("Error finding user", error);
       logger.error("Error finding user", error);
       throw new ApiError(500, "Database operation failed while findUser");
     } finally {
@@ -75,7 +73,6 @@ export const UserRepository = {
         userWithToken: result.rows[0],
       };
     } catch (error) {
-      // console.log("Error storing refresh token", error);
       logger.error("Error storing refresh token", error);
       throw new ApiError(
         500,

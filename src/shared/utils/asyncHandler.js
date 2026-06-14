@@ -7,7 +7,7 @@ const asyncHandler = (requestHandler) => {
       await requestHandler(req, res, next);
     } catch (error) {
 
-      logger.error("[asyncHandler] ", {
+      logger.error("\n[asyncHandler] ", {
         message: error.message || error,
         isApiError: error instanceof ApiError,
         stack: error.stack || "No stack trace available",

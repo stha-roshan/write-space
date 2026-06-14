@@ -1,6 +1,6 @@
 import express from "express";
 import { registerUser, loginUser } from "../../modules/user/user.controller.js";
-import { validateBody } from "../../shared/middleware/validate.middleware.js";
+import { validateBody, verifyUser } from "../../shared/middleware/index.js";
 import {
   registrationSchema,
   loginSchema,
@@ -9,4 +9,8 @@ const router = express.Router();
 
 router.post("/register", validateBody(registrationSchema), registerUser);
 router.post("/login", validateBody(loginSchema), loginUser);
+
+router.get("/test-route", verifyUser, (req, res) => {
+  res.json({ message: "Route is working!" });
+});
 export default router;

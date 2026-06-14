@@ -12,17 +12,21 @@ const logsDir = path.resolve(__dirname, "../../../logs");
 
 const isProd = process.env.NODE_ENV === "production";
 
+const myFormat = format.printf(({ level, message, timestamp, stack }) => {
+  if (stack) {
+    return `${timestamp} ${level}: ${message}\n${stack}`;
+  }
+  return `${timestamp} ${level}: ${message}`;
+});
+
 const devFormat = combine(
   colorize(),
   timestamp({ format: "HH:mm:ss" }),
-  simple()
+  errors({ stack: true }),
+  myFormat,
 );
 
-const prodFormat = combine(
-  timestamp(),
-  errors({ stack: true }),
-  json()
-);
+const prodFormat = combine(timestamp(), errors({ stack: true }), json());
 
 export const logger = createLogger({
   level: isProd ? "info" : "debug",

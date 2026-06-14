@@ -13,6 +13,12 @@ const findUserQuery = `
     WHERE email = $1  
 `;
 
+const findUserByIdQuery = `
+    SELECT id, name, email, role, is_active
+    FROM users
+    WHERE id = $1
+`
+
 const setRefreshTokenQuery = `
   UPDATE users
   SET refresh_token = $1
@@ -56,6 +62,16 @@ export const UserRepository = {
       throw new ApiError(500, "Database operation failed while findUser");
     } finally {
       client.release();
+    }
+  },
+
+  findUserById: async(id) => {
+    try {
+      const result = await pool.query(findUserByIdQuery, [id])
+      return result.rows[0]
+    } catch (error) {
+      logger.error("Error finding user by id", error);
+      throw new ApiError(500, "Database operation failed while findUserById");
     }
   },
 

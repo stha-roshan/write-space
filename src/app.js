@@ -2,6 +2,7 @@ import express from "express";
 
 import userRoutes from "./routes/user/user.routes.js";
 import postRoutes from "./routes/posts/post.routes.js";
+// import commentRoutes from "./routes/comments/comment.routes.js";
 
 import { ApiError } from "./shared/utils/index.js";
 
@@ -11,6 +12,7 @@ app.use(express.json());
 
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
+// app.use("/comments", commentRoutes);
 
 app.use((err, req, res, next) => {
   if (err instanceof ApiError) {

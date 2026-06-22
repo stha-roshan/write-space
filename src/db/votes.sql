@@ -5,5 +5,6 @@ CREATE TABLE votes(
     post_id UUID REFERENCES posts(id),
     user_id UUID REFERENCES users(id),
     type vote_type NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
     CONSTRAINT unique_user_post_vote UNIQUE(post_id, user_id)
 )

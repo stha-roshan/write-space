@@ -14,3 +14,10 @@ export const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await PostService.getAllPosts(req.query);
   return res.status(200).json(new ApiResponse(200, "All post fetched", posts));
 });
+
+export const getPost = asyncHandler(async (req, res) => {
+  const post = await PostService.getPost(req.params);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Post fetched successfully", post));
+});

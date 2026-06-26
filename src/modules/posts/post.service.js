@@ -19,4 +19,11 @@ export const PostService = {
     const posts = await PostRepository.getAllPosts({ offset, limit });
     return posts;
   },
+
+  getPost: async (data) => {
+    const { id } = data;
+
+    const post = await PostRepository.getPost(id);
+    return post;
+  },
 };

@@ -10,3 +10,12 @@ export const createComment = asyncHandler(async (req, res) => {
     .status(201)
     .json(new ApiResponse(201, "Comment created successfully", comment));
 });
+
+export const getAllComments = asyncHandler(async (req, res) => {
+  const { postId } = req.params;
+
+  const comments = await CommentService.getAllComments(postId, req.query);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Comments fetched successfully", comments));
+});

@@ -61,10 +61,6 @@ export const PostRepository = {
     } catch (error) {
       logger.error("Error fetching all posts", error);
 
-      if (error.code === "23502") {
-        throw new ApiError(400, "Required fields cannot be empty");
-      }
-
       throw new ApiError(
         500,
         "Database operation failed while fetching all posts",
@@ -85,14 +81,6 @@ export const PostRepository = {
       if (error instanceof ApiError) throw error;
 
       logger.error(`Error fetching post ${id}`, error);
-
-      if (error.code === "23502") {
-        throw new ApiError(400, "Required fields cannot be empty");
-      }
-
-      if (error.code === "23503") {
-        throw new ApiError(400, "Referenced resource does not exist");
-      }
 
       if (error.code === "22P02") {
         throw new ApiError(400, "Invalid value provided");

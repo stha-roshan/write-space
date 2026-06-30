@@ -48,6 +48,19 @@ export const PostRepository = {
       return result.rows[0];
     } catch (error) {
       logger.error("Error creating post", error);
+
+      if (error.code === "23503") {
+        throw new ApiError(404, "Referenced resource does not exist");
+      }
+
+      if (error.code === "23502") {
+        throw new ApiError(400, "Required fields cannot be empty");
+      }
+
+      if (error.code === "22P02") {
+        throw new ApiError(400, "Invalid ID format provided");
+      }
+
       throw new ApiError(500, "Database operation failed while creating post");
     }
   },

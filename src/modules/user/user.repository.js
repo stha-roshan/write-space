@@ -17,7 +17,7 @@ const findUserByIdQuery = `
     SELECT id, name, email, role, is_active
     FROM users
     WHERE id = $1
-`
+`;
 
 const setRefreshTokenQuery = `
   UPDATE users
@@ -41,6 +41,11 @@ export const UserRepository = {
       return registeredUser.rows[0];
     } catch (error) {
       logger.error("Error registering user", error);
+
+      if (error.code === "23505") {
+        throw new ApiError(409, "Email already registered");
+      }
+
       throw new ApiError(500, "Database operation failed while register");
     } finally {
       client.release();
@@ -65,10 +70,10 @@ export const UserRepository = {
     }
   },
 
-  findUserById: async(id) => {
+  findUserById: async (id) => {
     try {
-      const result = await pool.query(findUserByIdQuery, [id])
-      return result.rows[0]
+      const result = await pool.query(findUserByIdQuery, [id]);
+      return result.rows[0];
     } catch (error) {
       logger.error("Error finding user by id", error);
       throw new ApiError(500, "Database operation failed while findUserById");
@@ -84,12 +89,17 @@ export const UserRepository = {
         email,
       ]);
 
+      if (!result.rows[0]) {
+        throw new ApiError(404, "User not found");
+      }
       return {
         success: result.rowCount >= 1,
         userWithToken: result.rows[0],
       };
     } catch (error) {
       logger.error("Error storing refresh token", error);
+
+      if (error instanceof ApiError) throw error;
       throw new ApiError(
         500,
         "Database operation failed while setRefreshToken",

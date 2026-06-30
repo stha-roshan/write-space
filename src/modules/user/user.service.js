@@ -13,13 +13,6 @@ export const UserService = {
   register: async (data) => {
     const { name, email, password } = data;
 
-    const existingUser = await UserRepository.findUser(email);
-    const isExistingUser = existingUser.exists;
-
-    if (isExistingUser) {
-      throw new ApiError(409, "User already exists");
-    }
-
     const hash = await bcrypt.hash(password, saltRounds);
 
     const preparedData = {

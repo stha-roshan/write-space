@@ -77,14 +77,6 @@ export const CommentRepository = {
 
       logger.error(`Error fetching comments of post ${postId}`, error);
 
-      if (error.code === "23502") {
-        throw new ApiError(400, "Required fields cannot be empty");
-      }
-
-      if (error.code === "23503") {
-        throw new ApiError(400, "Referenced resource does not exist");
-      }
-
       if (error.code === "22P02") {
         throw new ApiError(400, "Invalid value provided");
       }
